@@ -58,5 +58,46 @@ const deletePost = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getUserPosts, deletePost };
+const updatePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    
+    
+    const existingPost = await Post.findById(id);
+    if (!existingPost) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    if (existingPost.user_id !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to update this post' });
+    }
+
+    
+    let image_url = existingPost.image_url;
+    if (req.file) {
+      image_url = `/uploads/${req.file.filename}`;
+      
+     
+    }
+
+   
+    await Post.update(id, { 
+      content: content || existingPost.content,
+      image_url
+    });
+
+   
+    const updatedPost = await Post.findById(id);
+    res.json(updatedPost);
+
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ 
+      error: 'Server error',
+      details: error.message 
+    });
+  }
+};
+
+module.exports = { createPost, getUserPosts, deletePost, updatePost };
 
