@@ -20,7 +20,7 @@ const updateProfile = async (req, res) => {
     const { username, email } = req.body;
     const userId = req.user.id;
 
-    // Check if email is being changed to one that already exists
+    // Check if email exists
     if (email) {
       const existingUser = await User.findByEmail(email);
       if (existingUser && existingUser.id !== userId) {
@@ -30,17 +30,26 @@ const updateProfile = async (req, res) => {
 
     const updateData = {
       username: username || req.user.username,
-      email: email || req.user.email,
-      profile_picture: req.file ? `/uploads/profile-pictures/${req.file.filename}` : undefined
+      email: email || req.user.email
     };
 
-    await User.update(userId, updateData);
+    // Only store filename if file exists
+    if (req.file) {
+      updateData.profile_picture = req.file.filename; // Just the filename
+    }
 
+    await User.update(userId, updateData);
     const updatedUser = await User.findById(userId);
-    res.json(updatedUser);
+    
+    res.json({
+      ...updatedUser,
+      // Return full URL for frontend
+      profile_picture: req.file 
+        ? `/uploads/profile-pictures/${req.file.filename}`
+        : updatedUser.profile_picture
+    });
   } catch (error) {
-    console.error('Error updating profile:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: error.message });
   }
 };
 

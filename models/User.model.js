@@ -35,7 +35,7 @@ class User {
   }
 
 static async update(id, { username, email, profile_picture }) {
-  
+  // Only update fields that are provided
   const updates = [];
   const params = [];
   
@@ -55,7 +55,7 @@ static async update(id, { username, email, profile_picture }) {
   }
   
   if (updates.length === 0) {
-    return; 
+    return; // No updates to make
   }
   
   const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
