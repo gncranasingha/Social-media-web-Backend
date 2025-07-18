@@ -1,4 +1,4 @@
-const database = require('../config/db');
+const database = require('../configs/db.config');
 
 class Post {
   static async create({ user_id, content, image_url = null }) {

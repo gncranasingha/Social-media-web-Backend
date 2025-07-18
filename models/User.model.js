@@ -1,4 +1,4 @@
-const database = require('../config/db')
+const database = require('../configs/db.config')
 
 
 class User {
