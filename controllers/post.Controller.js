@@ -5,37 +5,19 @@ const Post = require('../models/Post.model');
 // @access  Private
 const createPost = async (req, res) => {
   try {
-    const { content } = req.body;
-
-    console.log('Request body:', req.body);
-    console.log('Uploaded file:', req.file);
-
-    const image_url = req.file 
-      ? `../uploads/${req.file.filename}`
+    const imagePath = req.file 
+      ? `/uploads/${req.file.filename}` 
       : null;
 
-    console.log('Image URL to save:', image_url);
-
-    const postId = await Post.create({
+    const post = await Post.create({
       user_id: req.user.id,
-      content,
-      image_url
+      content: req.body.content,
+      image_url: imagePath
     });
 
-    const newPost = await Post.findById(postId);
-
-    if (!newPost) {
-      return res.status(500).json({ error: 'Failed to retrieve created post' });
-    }
-
-    res.status(201).json(newPost);
-
+    res.status(201).json(post);
   } catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).json({ 
-      error: 'Server error',
-      details: error.message 
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 

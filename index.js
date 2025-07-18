@@ -14,7 +14,7 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // app.get('/api/test-db', async (req, res) => {
 //   try {
@@ -42,3 +42,4 @@ app.use((err, req, res, next) => {
 //listen to the port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

@@ -8,7 +8,7 @@ require('dotenv').config();
 // @access  Public
 const register = async (req, res) => {
   try {
-    const { username, email, password, profile_picture } = req.body;
+    const { username, email, password } = req.body;
     
     // Check if user exists
     const existingUser = await User.findByEmail(email);
@@ -20,19 +20,34 @@ const register = async (req, res) => {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
+    // Handle profile picture
+    let profilePicturePath = null;
+    if (req.file) {
+      profilePicturePath = req.file.path.replace(/\\/g, '/'); // Convert to forward slashes for consistency
+    }
+    
     // Create user
     const userId = await User.create({
       username,
       email,
       password: hashedPassword,
-      profile_picture
+      profile_picture: profilePicturePath
     });
 
     // Generate JWT
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(201).json({ token });
+    res.status(201).json({ 
+      token,
+      user: {
+        id: userId,
+        username,
+        email,
+        profile_picture: profilePicturePath
+      }
+    });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
