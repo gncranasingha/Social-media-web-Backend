@@ -1,14 +1,17 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../models/User');
+const User = require('../models/User.model');
 require('dotenv').config();
 
+// @route   POST /api/v1/auth/register
+// @desc    Register a new user
+// @access  Public
 const register = async (req, res) => {
   try {
     const { username, email, password, profile_picture } = req.body;
     
-       // Check if user exists
-   const existingUser = await User.findByEmail(email);
+    // Check if user exists
+    const existingUser = await User.findByEmail(email);
     
     if (existingUser) {
       return res.status(400).json({ error: 'Email already in use' });
@@ -24,8 +27,6 @@ const register = async (req, res) => {
       password: hashedPassword,
       profile_picture
     });
-    console.log(userId);
-    
 
     // Generate JWT
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -36,6 +37,9 @@ const register = async (req, res) => {
   }
 };
 
+// @route   POST /api/v1/auth/login
+// @desc    Authenticate user & get token
+// @access  Public
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;

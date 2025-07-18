@@ -1,5 +1,8 @@
-const User = require('../models/User');
+const User = require('../models/User.model');
 
+// @route   GET /api/v1/users/profile
+// @desc    Get the currently authenticated user's profile
+// @access  Private
 const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);

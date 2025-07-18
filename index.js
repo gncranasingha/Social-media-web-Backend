@@ -4,10 +4,10 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const postRoutes = require('./routes/postRoutes');
-const database = require('./config/db');
+const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/post.routes');
+//const database = require('./configs/db');
 
 const app = express();
 
@@ -29,9 +29,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // });
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/posts', postRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
@@ -39,5 +39,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
+//listen to the port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

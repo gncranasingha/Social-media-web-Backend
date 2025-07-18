@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const upload = require('../middleware/upload');
-const { createPost, getUserPosts, deletePost,updatePost  } = require('../controllers/postController');
+const auth = require('../middlewares/auth.middleware');
+const upload = require('../middlewares/upload.middleware');
+const { createPost, getUserPosts, deletePost,updatePost  } = require('../controllers/post.Controller');
 
 router.post('/', auth, upload.single('image'), createPost);
 router.get('/user/:userId', auth, getUserPosts);
